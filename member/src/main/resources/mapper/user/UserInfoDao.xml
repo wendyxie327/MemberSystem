@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.member.user.dao.UserInfoDao">
+
+    <insert id="insertUser" parameterType="com.member.user.vo.UserInfo">
+        INSERT INTO tbl_user_info (
+            user_id, user_code, rode_id, referee_user_id,
+            higher_user_id, area_name, higher_rode_id, login_pwd, verify_status,
+            create_time, verify_time, update_time, real_user_name, identity_id,
+            address_province, address_city, address_area, address_detail, mobile_num, qq,wx,
+            bank_name, bank_code, bank_user_name, bank_address
+        )VALUES(
+            #{userId}, #{userCode}, #{rodeId}, #{refereeUserId},
+                       #{higherUserId}, #{areaName}, #{higherRodeId}, #{loginPwd}, #{verifyStatus},
+                       #{createTime}, #{verifyTime}, #{updateTime}, #{realUserName}, #{identityId},
+                                                     #{addressProvince}, #{addressCity}, #{addressArea}, #{addressDetail}, #{mobileNum}, #{qq},#{wx},
+                                                     #{bankName}, #{bankCode}, #{bankUserName}, #{bankAddress}
+        )
+    </insert>
+
+    <select id="queryUserInfoByCode" resultType="com.member.user.vo.UserInfo" parameterType="String">
+        SELECT * FROM tbl_user_info WHERE user_code = #{userCode}
+    </select>
+
+    <select id="queryUserInfoById" resultType="com.member.user.vo.UserInfo" parameterType="String">
+        SELECT * FROM tbl_user_info WHERE user_id = #{userId}
+    </select>
+
+    <!-- 查询需要被审核的用户列表 -->
+    <select id="queryNeedVerifyUserList" resultType="com.member.user.vo.UserInfo">
+        SELECT  (SELECT user_code FROM tbl_user_info WHERE u.referee_user_id=tbl_user_info.user_id ) referee_user_code , u.* FROM tbl_user_info u
+        WHERE u.verify_status = '1' or u.verify_status = '3' ORDER BY u.verify_time
+    </select>
+
+
+    <!-- 更新用户基本信息 -->
+    <update id="updateUserInfo" parameterType="com.member.user.vo.UserInfo">
+        UPDATE tbl_user_info SET
+        user_code =  #{userCode}, rode_id = #{rodeId} , referee_user_id = #{refereeUserId},
+        higher_user_id = #{higherUserId} , area_name = #{areaName}, higher_rode_id=#{higherRodeId},
+        login_pwd=#{loginPwd}, verify_status=#{verifyStatus},
+        verify_time= #{verifyTime}, update_time=#{updateTime}, real_user_name=#{realUserName}, identity_id=#{identityId},
+        address_province=#{addressProvince}, address_city=#{addressCity}, address_area=#{addressArea}, address_detail=#{addressDetail},
+        mobile_num=#{mobileNum}, qq=#{qq}, wx=#{wx},
+        bank_name= #{bankName}, bank_code=#{bankCode}, bank_user_name=#{bankUserName}, bank_address=#{bankAddress}
+        WHERE user_id = #{userId}
+    </update>
+
+    <select id="queryRefereeUserList" resultType="com.member.user.vo.UserInfo">
+        SELECT * FROM tbl_user_info WHERE referee_user_id = #{refereeUserId} ORDER BY create_time DESC
+    </select>
+</mapper>

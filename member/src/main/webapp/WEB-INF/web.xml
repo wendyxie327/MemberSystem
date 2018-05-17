@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+	http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         metadata-complete="true" version="3.1">
+
+    <!-- 项目启动要读取的Spring配置文件 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath:config/spring/spring-dao.xml,
+            classpath:config/spring/spring-service.xml<!-- ,
+			classpath:config/spring/spring-security.xml -->
+        </param-value>
+    </context-param>
+
+    <!-- SpringMvc -->
+    <servlet>
+        <servlet-name>member-dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:config/spring/spring-web.xml</param-value>
+        </init-param>
+        <!-- 何时启动 大于0的值表示容器启动时初始化此servlet，正值越小优先级越高 -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <!-- servlet名称，与上面中的servlet-name必须一致 -->
+        <servlet-name>member-dispatcher</servlet-name>
+        <!-- servlet过滤的路径，也就是你在jsp中访问servlet时应该在action中填写的东西 -->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <!-- 字符编码过滤器 -->
+    <filter>
+        <filter-name>characterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <!-- 字符编码拦截方式 -->
+    <filter-mapping>
+        <filter-name>characterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 是否登录 -->
+    <filter>
+        <filter-name>loginFilter</filter-name>
+        <filter-class>com.member.common.filter.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>loginFilter</filter-name>
+        <url-pattern>/views/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>loginFilter</filter-name>
+        <url-pattern>/restful/*</url-pattern>
+    </filter-mapping>
+    <!-- springSecurity权限控制过滤器 -->
+    <!--
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+     -->
+
+    <!-- springSecurity过滤器 -->
+    <!--
+    <filter>
+         <filter-name>springSecurityFilterChain</filter-name>
+         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+     </filter>
+     <filter-mapping>
+         <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    -->
+
+    <!-- Spring监听器 ContextLoaderListener监听器的作用就是启动Web容器时,自动装配ApplicationContext的配置信息 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- 防止Spring内存溢出监听器  wzhz 2017.03.31 -->
+    <!-- 在web.xml中注册IntrospectorCleanupListener监听器以解决struts等框架可能产生的内存泄露问题 wzhz 2017.03.31 -->
+    <!-- http://blog.csdn.net/yakoo5/article/details/8240925 -->
+    <!-- http://www.cnblogs.com/imfjj/p/5827082.html -->
+    <listener>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
+
+    <!-- session超时定义,单位为分钟 -->
+    <session-config>
+        <session-timeout>120</session-timeout>
+    </session-config>
+
+    <!-- 描述性的文字说明，没实际意义，一般情况下直接删除掉 -->
+    <display-name>MemberSystem</display-name>
+    <!-- 配置在web.xml中的一个欢迎页 -->
+    <welcome-file-list>
+        <welcome-file>/login.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- Error Page定义 -->
+    <!-- 404错误页面的定义 -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/404.jsp</location>
+    </error-page>
+    <!--
+    <error-page>
+        <error-code>500</error-code>
+        <location>/commons/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/commons/403.jsp</location>
+    </error-page>
+     -->
+
+</web-app>

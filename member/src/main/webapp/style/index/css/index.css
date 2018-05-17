@@ -1,0 +1,18 @@
+.system_title_content {
+    display: flex;
+    display: -webkit-flex; /* Safari */
+    align-items:center;/*指定垂直居中*/
+    width: 300px;
+}
+
+.system_title {
+    text-align: center;
+    vertical-align: bottom;
+    margin-bottom: 0px;
+    margin-top: 5px;
+    display: table-cell;
+}
+
+.menu_user_code{
+    font-size: x-large;
+}

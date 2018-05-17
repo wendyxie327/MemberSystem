@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.member.account.dao.">
+
+    <insert id="insertUserAccountHis" parameterType="com.member.account.vo.UserAccountHis">
+        INSERT INTO tbl_user_account_his
+        ( user_id, user_code, change_type, current_consume, changing_consume, changed_consume,
+         third_serial_no, create_time)
+        VALUES
+        ( #{userId}, #{userCode}, #{changeType}, #{currentConsume}, #{changingConsume}, #{changedConsume},
+         #{thirdSerialNo}, #{createTime})
+    </insert>
+
+    <select id="queryHisById" resultType="com.member.account.vo.UserAccountHis" parameterType="String">
+        SELECT * FROM tbl_user_account_his
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="queryHisByType" resultType="com.member.account.vo.UserAccountHis" parameterType="String">
+        SELECT * FROM tbl_user_account_his
+        WHERE user_id = #{userId} AND change_type=#{changeType}
+    </select>
+
+</mapper>

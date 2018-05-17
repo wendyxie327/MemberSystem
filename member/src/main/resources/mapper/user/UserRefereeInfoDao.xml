@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.member.user.dao.UserRefereeInfoDao">
+
+    <insert id="insertUserReferee" parameterType="com.member.user.vo.UserRefereeInfo">
+        INSERT INTO tbl_user_referee
+         (user_id, area_a, area_b, num_update_time, num_enough_time, account_update_time, enough_num, enough_income )
+         VALUES
+         (#{userId}, #{areaA}, #{areaB}, #{numUpdateTime}, #{numEnoughTime}, #{accountUpdateTime}, #{enoughNum}, #{enoughIncome})
+    </insert>
+
+    <update id="updateUserRefereeInfo" parameterType="com.member.user.vo.UserRefereeInfo">
+        UPDATE tbl_user_referee SET
+        area_a = #{areaA}, area_b=#{areaB}, num_update_time = #{numUpdateTime},
+        num_enough_time = #{numEnoughTime}, account_update_time = #{accountUpdateTime},
+        enough_num = #{enoughNum}, enough_income = #{enoughIncome}
+        WHERE user_id = #{userId}
+    </update>
+
+    <select id="queryUserRefereeById" resultType="com.member.user.vo.UserRefereeInfo" parameterType="String">
+        SELECT * FROM tbl_user_referee
+        WHERE user_id = #{userId}
+    </select>
+</mapper>
