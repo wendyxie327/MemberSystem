@@ -7,6 +7,12 @@ import com.member.common.util.StringUtil;
 import com.member.common.util.SystemUtil;
 import com.member.user.service.UserInfoService;
 import com.member.user.vo.UserInfo;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +48,14 @@ public class LoginController {
     @RequestMapping(value = "/logout", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     public void logout(HttpSession session, ServletRequest request, ServletResponse response) {
         logger.debug("正在执行退出系统操作..");
-        // 清空 管理用户和控制台用户session
-        session.removeAttribute("userInfo");
-        // 销毁session
-        session.invalidate();
+//        // 清空 管理用户和控制台用户session
+//        session.removeAttribute("userInfo");
+//        // 销毁session
+//        session.invalidate();
+
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+
         try {
             request.getRequestDispatcher("/login").forward(request, response);
         } catch (ServletException e) {
@@ -78,25 +88,53 @@ public class LoginController {
             //2 将页面上传来的密码进行md5加密
             pwd = SystemUtil.dealPwd2DB(pwd);
 
-            //3 根据手机号和密码查询该用户是否存在
-            UserInfo userInfo = userInfoService.queryUserInfoByCode(userCode);
+            //创建subject实例
+            Subject subject = SecurityUtils.getSubject();
 
-            if (userInfo != null
-                    && userInfo.getLoginPwd() != null
-                    && userInfo.getLoginPwd().equals(pwd) ){
+            //判断当前用户是否登录
+            if(!subject.isAuthenticated()){
+                //将用户名及密码封装交个UsernamePasswordToken
+                UsernamePasswordToken token = new UsernamePasswordToken(userCode,pwd );
+                try {
+                    subject.login(token);   // 进入CustomRealm中，进行登陆认证
 
-                // 4.检查用户是否已经通过审核
-                if (ConfigUtil.USER_VERIFY_STATUS_WAIT_COMMON.equals(userInfo.getVerifyStatus())){
-                    return new ControllerResult<>(false, "您的账户还在审核中...");
+                    UserInfo userInfo = (UserInfo)subject.getPrincipal();
+                    logger.debug(userInfo.toString() );
+                    // 4.检查用户是否已经通过审核
+                    if (ConfigUtil.USER_VERIFY_STATUS_WAIT_COMMON.equals(userInfo.getVerifyStatus())){
+                        subject.logout(); // 对于未审核的，需要退出
+                        return new ControllerResult<>(false, "您的账户还在审核中...");
+                    }
+//                    session.setAttribute("userInfo", userInfo);
+
+                    logger.debug("1= " + session);
+                    logger.debug("2= " + subject.getSession());
+                } catch (IncorrectCredentialsException e) {
+                    e.printStackTrace();
+                    return new ControllerResult<>(false, "用户名或密码错误！");
+                } catch (AuthenticationException e) {
+                    e.printStackTrace();
+                    return new ControllerResult<>(false, "验证不通过，无法登录！");
                 }
-
-                //5. 将用户信息存入session
-                session.setAttribute("userInfo", userInfo);
-
-                return new ControllerResult<>(true, "登录成功！");
-            }else {
-                return new ControllerResult<>(false, "用户名或密码错误！");
             }
+            return new ControllerResult<>(true, "登录成功！");
+ //           //3 根据手机号和密码查询该用户是否存在
+//            UserInfo userInfo = userInfoService.queryUserInfoByCode(userCode);
+//            if (userInfo != null
+//                    && userInfo.getLoginPwd() != null
+//                    && userInfo.getLoginPwd().equals(pwd) ){
+//
+//                // 4.检查用户是否已经通过审核
+//                if (ConfigUtil.USER_VERIFY_STATUS_WAIT_COMMON.equals(userInfo.getVerifyStatus())){
+//                    return new ControllerResult<>(false, "您的账户还在审核中...");
+//                }
+//
+//                //5. 将用户信息存入session
+//                session.setAttribute("userInfo", userInfo);
+//                return new ControllerResult<>(true, "登录成功！");
+//            }else {
+//                return new ControllerResult<>(false, "用户名或密码错误！");
+//            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return new ControllerResult<>(false, "发生未知错误");

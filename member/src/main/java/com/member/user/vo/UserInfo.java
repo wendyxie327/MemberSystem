@@ -251,4 +251,37 @@ public class UserInfo {
     public void setBankAddress(String bankAddress) {
         this.bankAddress = bankAddress;
     }
+
+    @Override
+    public String toString() {
+        return "UserInfo{" +
+                "userId='" + userId + '\'' +
+                ", userCode='" + userCode + '\'' +
+                ", rodeId='" + rodeId + '\'' +
+                ", refereeUserId='" + refereeUserId + '\'' +
+                ", higherUserId='" + higherUserId + '\'' +
+                ", higherUserCode='" + higherUserCode + '\'' +
+                ", higherRodeId='" + higherRodeId + '\'' +
+                ", areaName='" + areaName + '\'' +
+                ", loginPwd='" + loginPwd + '\'' +
+                ", verifyStatus='" + verifyStatus + '\'' +
+                ", createTime=" + createTime +
+                ", verifyTime=" + verifyTime +
+                ", updateTime=" + updateTime +
+                ", realUserName='" + realUserName + '\'' +
+                ", identityId='" + identityId + '\'' +
+                ", addressProvince='" + addressProvince + '\'' +
+                ", addressCity='" + addressCity + '\'' +
+                ", addressArea='" + addressArea + '\'' +
+                ", addressDetail='" + addressDetail + '\'' +
+                ", mobileNum='" + mobileNum + '\'' +
+                ", qq='" + qq + '\'' +
+                ", wx='" + wx + '\'' +
+                ", bankName='" + bankName + '\'' +
+                ", bankCode='" + bankCode + '\'' +
+                ", bankUserName='" + bankUserName + '\'' +
+                ", bankAddress='" + bankAddress + '\'' +
+                ", refereeUserCode='" + refereeUserCode + '\'' +
+                '}';
+    }
 }
