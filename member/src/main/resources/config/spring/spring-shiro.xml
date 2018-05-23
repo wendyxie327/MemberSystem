@@ -25,6 +25,7 @@
                 <!-- /** = authc 所有url都必须认证通过才可以访问 -->
                 <!--/restful/** = authc-->
                 /restful/login/** = anon
+                /restful/** = authc
             </value>
         </property>
     </bean>

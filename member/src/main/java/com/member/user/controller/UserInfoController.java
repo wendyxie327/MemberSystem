@@ -9,6 +9,7 @@ import com.member.common.util.WordBookUtil;
 import com.member.user.dto.RefereedUserDto;
 import com.member.user.service.UserInfoService;
 import com.member.user.vo.UserInfo;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +58,7 @@ public class UserInfoController {
      *
      * @return 会员审核页面
      */
+    @RequiresRoles("1")
     @RequestMapping(value = "/bossVerifyUserView")
     public String bossVerifyUserView(HttpSession httpSession, ServletRequest request, ServletResponse response, Model model){
         // 1.获取登陆用户基本信息

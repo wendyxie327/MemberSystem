@@ -29,10 +29,11 @@ public class CustomRealm extends AuthorizingRealm{
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         logger.debug("--------授权--------");
-        String userName = (String) principalCollection.getPrimaryPrincipal();
+        UserInfo userInfo = (UserInfo) principalCollection.getPrimaryPrincipal();
         SimpleAuthorizationInfo info=new SimpleAuthorizationInfo();
         // 设置角色
-        info.addRole(userInfoService.queryUserInfoByCode(userName).getRodeId());
+        info.addRole(userInfo.getRodeId());
+        logger.debug("rodeId = " + info.getRoles().toString());
 
         //TODO 设置相应权限
         // info.addStringPermissions();

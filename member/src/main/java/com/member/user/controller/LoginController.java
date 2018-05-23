@@ -54,15 +54,16 @@ public class LoginController {
 //        session.invalidate();
 
         Subject subject = SecurityUtils.getSubject();
+        subject.getSession().removeAttribute("userInfo");
         subject.logout();
 
-        try {
-            request.getRequestDispatcher("/login").forward(request, response);
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            request.getRequestDispatcher("/login").forward(request, response);
+//        } catch (ServletException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
@@ -70,12 +71,11 @@ public class LoginController {
      * 登陆功能
      * @param userCode  用户编号
      * @param pwd   登陆密码
-     * @param session   HttpSession
      * @return  json
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
     @ResponseBody
-    public ControllerResult<?> login(@RequestParam("loginUsername") String userCode, @RequestParam("loginPassword") String pwd, HttpSession session) {
+    public ControllerResult<?> login(@RequestParam("loginUsername") String userCode, @RequestParam("loginPassword") String pwd) {
         try {
             //1 检查信息是否完整
             if (userCode == null || userCode.length() == 0) {
@@ -105,10 +105,8 @@ public class LoginController {
                         subject.logout(); // 对于未审核的，需要退出
                         return new ControllerResult<>(false, "您的账户还在审核中...");
                     }
-//                    session.setAttribute("userInfo", userInfo);
+                    subject.getSession().setAttribute("userInfo", userInfo);
 
-                    logger.debug("1= " + session);
-                    logger.debug("2= " + subject.getSession());
                 } catch (IncorrectCredentialsException e) {
                     e.printStackTrace();
                     return new ControllerResult<>(false, "用户名或密码错误！");
